@@ -1,10 +1,169 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/constants/gaps.dart';
+import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/screens/features/onboarding/tutorial_screen.dart';
+import 'package:tiktok_clone/screens/features/onboarding/widgets/interest_button.dart';
 
-class InterestsScreen extends StatelessWidget {
+const interests = [
+  "Daily Life",
+  "Comedy",
+  "Entertainment",
+  "Animals",
+  "Food",
+  "Beauty & Style",
+  "Drama",
+  "Learning",
+  "Talent",
+  "Sports",
+  "Auto",
+  "Family",
+  "Fitness & Health",
+  "DIY & Life Hacks",
+  "Arts & Crafts",
+  "Dance",
+  "Outdoors",
+  "Oddly Satisfying",
+  "Home & Garden",
+  "Daily Life",
+  "Comedy",
+  "Entertainment",
+  "Animals",
+  "Food",
+  "Beauty & Style",
+  "Drama",
+  "Learning",
+  "Talent",
+  "Sports",
+  "Auto",
+  "Family",
+  "Fitness & Health",
+  "DIY & Life Hacks",
+  "Arts & Crafts",
+  "Dance",
+  "Outdoors",
+  "Oddly Satisfying",
+  "Home & Garden",
+];
+
+class InterestsScreen extends StatefulWidget {
   const InterestsScreen({super.key});
 
   @override
+  State<InterestsScreen> createState() => _InterestsScreenState();
+}
+
+class _InterestsScreenState extends State<InterestsScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  static const double _showTitleOffset = 100;
+  bool _showTitle = false;
+
+  void _onScroll() {
+    final bool shouldShowTitle = _scrollController.offset > _showTitleOffset;
+
+    if (shouldShowTitle != _showTitle) {
+      setState(() {
+        _showTitle = shouldShowTitle;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onNextTap() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const TutorialScreen()),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        title: AnimatedOpacity(
+          opacity: _showTitle ? 1 : 0,
+          duration: Duration(milliseconds: 300),
+          child: Text("Choose your interests"),
+        ),
+      ),
+      body: Scrollbar(
+        controller: _scrollController,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: Sizes.size24,
+              right: Sizes.size24,
+              bottom: Sizes.size16,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Gaps.v32,
+                Text(
+                  "Choose your interests",
+                  style: TextStyle(
+                    fontSize: Sizes.size40,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Gaps.v20,
+                Text(
+                  "Get better video recommendations",
+                  style: TextStyle(fontSize: Sizes.size20),
+                ),
+                Gaps.v64,
+                Wrap(
+                  runSpacing: 15,
+                  spacing: 15,
+                  children: [
+                    for (var interest in interests)
+                      InterestButton(interest: interest),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        height: 140,
+        elevation: 2,
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: Sizes.size40,
+            top: Sizes.size16,
+            left: Sizes.size24,
+            right: Sizes.size24,
+          ),
+          child: GestureDetector(
+            onTap: _onNextTap,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: Sizes.size20),
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+              child: Text(
+                "Next",
+                style: TextStyle(color: Colors.white, fontSize: Sizes.size16),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
