@@ -214,19 +214,30 @@ DateTime initialDate = DateTime(
 - `flutter`: SDK ^3.9.0
 - `font_awesome_flutter: ^10.3.0` - Icons
 - `cupertino_icons: ^1.0.8` - iOS-style icons
+- `video_player: ^2.4.10` - Video playback (현재 사용 중)
+- `visibility_detector: ^0.4.0+2` - Widget visibility detection (현재 사용 중)
 - **Planned**: 
   - `firebase_core` - Firebase initialization
   - `firebase_auth` - Authentication
   - `cloud_firestore` - Database
   - `firebase_storage` - Media storage
-  - `video_player` - Video playback
   - `camera` - Video recording
   - `permission_handler` - Permissions
   - `image_picker` - Media selection
 
 ## Git Workflow
 - Branch naming: `feature/feature-name`, `fix/bug-name`
-- Commit messages: Use conventional commits
+- **커밋 메시지: 한글로 작성 (Write commit messages in Korean)**
+  - Format: `type: 제목`
+  - Types:
+    - `feat`: 새로운 기능 추가
+    - `fix`: 버그 수정
+    - `docs`: 문서 수정
+    - `style`: 코드 포맷팅, 세미콜론 누락 등
+    - `refactor`: 리팩토링
+    - `test`: 테스트 코드
+    - `chore`: 빌드 업무, 패키지 매니저 수정 등
+  - Example: `feat: 비디오 타임라인 기능 구현`
 - PR reviews required before merge
 - Keep commits atomic and descriptive
 
