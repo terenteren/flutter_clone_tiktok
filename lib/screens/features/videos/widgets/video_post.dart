@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/screens/features/videos/widgets/video_button.dart';
+import 'package:tiktok_clone/screens/features/videos/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -97,8 +98,9 @@ class _VideoPostState extends State<VideoPost>
   void _onVisibilityChanged(VisibilityInfo info) {
     if (!mounted) return;
     if (!_isInitialized) return;
-    
+
     if (info.visibleFraction == 1) {
+      if (_isPaused) return; // 사용자가 일시정지한 경우 재생하지 않음
       // 완전히 보일 때 재생
       if (!_videoPlayerController.value.isPlaying) {
         _videoPlayerController.play();
@@ -125,6 +127,19 @@ class _VideoPostState extends State<VideoPost>
     setState(() {
       _isPaused = !_isPaused;
     });
+  }
+
+  void _onCommentsTap(BuildContext context) async {
+    if (_videoPlayerController.value.isPlaying) {
+      _onTogglePause();
+    }
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (context) => VideoComments(),
+    );
+    _onTogglePause();
   }
 
   @override
@@ -245,7 +260,13 @@ class _VideoPostState extends State<VideoPost>
                 Gaps.v24,
                 VideoButton(icon: FontAwesomeIcons.solidHeart, text: "2.9M"),
                 Gaps.v24,
-                VideoButton(icon: FontAwesomeIcons.solidComment, text: "33K"),
+                GestureDetector(
+                  onTap: () => _onCommentsTap(context),
+                  child: VideoButton(
+                    icon: FontAwesomeIcons.solidComment,
+                    text: "33K",
+                  ),
+                ),
                 Gaps.v24,
                 VideoButton(icon: FontAwesomeIcons.share, text: "Share"),
               ],
