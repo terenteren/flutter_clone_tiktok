@@ -99,17 +99,27 @@ class _VideoPostState extends State<VideoPost>
     if (!mounted) return;
     if (!_isInitialized) return;
 
-    if (info.visibleFraction == 1) {
-      if (_isPaused) return; // 사용자가 일시정지한 경우 재생하지 않음
-      // 완전히 보일 때 재생
+    // 50% 이상 보이면 재생, 그 이하면 일시정지
+    if (info.visibleFraction > 0.5) {
+      // 사용자가 수동으로 일시정지한 경우 자동 재생하지 않음
+      if (_isPaused) return;
+      // 50% 이상 보일 때 자동 재생
       if (!_videoPlayerController.value.isPlaying) {
         _videoPlayerController.play();
       }
     } else {
-      // 화면에서 벗어나면 일시정지
+      // 50% 미만으로 보이면 일시정지
       if (_videoPlayerController.value.isPlaying) {
         _videoPlayerController.pause();
       }
+    }
+    
+    // 화면에서 완전히 벗어났을 때 (다른 탭으로 이동 등) 상태 동기화
+    if (info.visibleFraction == 0 && _videoPlayerController.value.isPlaying) {
+      // _isPaused 상태를 true로 업데이트하여 돌아왔을 때 자동 재생 방지
+      setState(() {
+        _isPaused = true;
+      });
     }
   }
 
