@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/screens/features/authentication/sign_up_screen.dart';
 import 'package:tiktok_clone/screens/features/inbox/activity_screen.dart';
 import 'package:tiktok_clone/screens/features/main_navigation/main_navigation_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   runApp(const TikTokApp());
 }
 
@@ -14,6 +20,7 @@ class TikTokApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Tiktok Clone',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,

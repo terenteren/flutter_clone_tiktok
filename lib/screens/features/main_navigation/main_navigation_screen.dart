@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/breakpoint.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/screens/features/discover/discover_screen.dart';
 import 'package:tiktok_clone/screens/features/inbox/inbox_screen.dart';
@@ -16,7 +17,7 @@ class MainNavigationScreen extends StatefulWidget {
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
-  int _selectedIndex = 4;
+  int _selectedIndex = 1;
 
   final screens = [
     Center(child: Text("Home", style: TextStyle(fontSize: 49))),
@@ -44,16 +45,25 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: _selectedIndex == 0 ? Colors.black : Colors.white,
-      body: Stack(
-        children: [
-          Offstage(offstage: _selectedIndex != 0, child: VideoTimelineScreen()),
-          Offstage(offstage: _selectedIndex != 1, child: DiscoverScreen()),
-          Offstage(offstage: _selectedIndex != 3, child: InboxScreen()),
-          Offstage(offstage: _selectedIndex != 4, child: UserProfileScreen()),
-        ],
+      body: Center(
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: width > Breakpoints.sm ? Breakpoints.md : double.infinity,
+          ),
+          child: Stack(
+            children: [
+              Offstage(offstage: _selectedIndex != 0, child: VideoTimelineScreen()),
+              Offstage(offstage: _selectedIndex != 1, child: DiscoverScreen()),
+              Offstage(offstage: _selectedIndex != 3, child: InboxScreen()),
+              Offstage(offstage: _selectedIndex != 4, child: UserProfileScreen()),
+            ],
+          ),
+        ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

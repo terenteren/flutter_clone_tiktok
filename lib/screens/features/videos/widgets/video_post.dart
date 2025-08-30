@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -45,6 +46,8 @@ class _VideoPostState extends State<VideoPost>
   }
 
   void _initVideoPlayer() async {
+    if (!mounted) return;
+
     try {
       // 로컬 assets 비디오 사용
       _videoPlayerController = VideoPlayerController.asset(
@@ -53,7 +56,9 @@ class _VideoPostState extends State<VideoPost>
 
       await _videoPlayerController.initialize();
       await _videoPlayerController.setLooping(true);
-      await _videoPlayerController.setVolume(0);
+      if (kIsWeb) {
+        await _videoPlayerController.setVolume(0);
+      }
 
       _videoPlayerController.addListener(_onVideoChange);
 
@@ -113,7 +118,7 @@ class _VideoPostState extends State<VideoPost>
         _videoPlayerController.pause();
       }
     }
-    
+
     // 화면에서 완전히 벗어났을 때 (다른 탭으로 이동 등) 상태 동기화
     if (info.visibleFraction == 0 && _videoPlayerController.value.isPlaying) {
       // _isPaused 상태를 true로 업데이트하여 돌아왔을 때 자동 재생 방지
@@ -150,6 +155,18 @@ class _VideoPostState extends State<VideoPost>
       builder: (context) => VideoComments(),
     );
     _onTogglePause();
+  }
+
+  void _onVolumeTap() {
+    if (!mounted) return;
+    if (!_isInitialized) return;
+
+    if (_videoPlayerController.value.volume == 0) {
+      _videoPlayerController.setVolume(1.0);
+    } else {
+      _videoPlayerController.setVolume(0.0);
+    }
+    setState(() {});
   }
 
   @override
@@ -249,6 +266,23 @@ class _VideoPostState extends State<VideoPost>
                 Text(
                   "This is my first video",
                   style: TextStyle(color: Colors.white, fontSize: Sizes.size12),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 20,
+            right: 10,
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () => _onVolumeTap(),
+                  child: VideoButton(
+                    icon: _videoPlayerController.value.volume == 0
+                        ? FontAwesomeIcons.volumeXmark
+                        : FontAwesomeIcons.volumeOff,
+                    text: "",
+                  ),
                 ),
               ],
             ),
