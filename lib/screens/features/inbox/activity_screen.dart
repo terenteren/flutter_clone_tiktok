@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/constants/utils.dart';
 
 class ActivityScreen extends StatefulWidget {
   const ActivityScreen({super.key});
@@ -70,8 +71,10 @@ class _ActivityScreenState extends State<ActivityScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: isDark ? Colors.white : Colors.black,
         title: GestureDetector(
           onTap: _toggleAnimations,
           child: Row(
@@ -82,7 +85,11 @@ class _ActivityScreenState extends State<ActivityScreen>
               Gaps.h2,
               RotationTransition(
                 turns: _arrowAnimation,
-                child: FaIcon(FontAwesomeIcons.chevronDown, size: Sizes.size14),
+                child: FaIcon(
+                  FontAwesomeIcons.chevronDown,
+                  size: Sizes.size14,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
               ),
             ],
           ),
@@ -143,26 +150,25 @@ class _ActivityScreenState extends State<ActivityScreen>
                     leading: Container(
                       width: Sizes.size52,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark
+                            ? Colors.grey.shade800
+                            : Colors.grey.shade200,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.grey.shade400,
+                          color: isDark
+                              ? Colors.grey.shade800
+                              : Colors.grey.shade200,
                           width: Sizes.size1,
                         ),
                       ),
-                      child: Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.bell,
-                          color: Colors.black,
-                        ),
-                      ),
+                      child: Center(child: FaIcon(FontAwesomeIcons.bell)),
                     ),
                     title: RichText(
                       text: TextSpan(
                         text: "Accout updates: ",
                         style: TextStyle(
-                          color: Colors.black,
                           fontWeight: FontWeight.w600,
+                          color: isDark ? null : Colors.black,
                           fontSize: Sizes.size16,
                         ),
                         children: [
@@ -198,7 +204,7 @@ class _ActivityScreenState extends State<ActivityScreen>
             position: _panelAnimation,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).appBarTheme.backgroundColor,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(Sizes.size4),
                   bottomRight: Radius.circular(Sizes.size4),
@@ -211,11 +217,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                     ListTile(
                       title: Row(
                         children: [
-                          FaIcon(
-                            tab["icon"],
-                            color: Colors.black,
-                            size: Sizes.size16,
-                          ),
+                          Icon(tab["icon"], size: Sizes.size16),
                           Gaps.h20,
                           Text(
                             tab["title"],

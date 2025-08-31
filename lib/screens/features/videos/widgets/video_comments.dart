@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/constants/utils.dart';
 
 class VideoComments extends StatefulWidget {
   const VideoComments({super.key});
@@ -34,6 +35,7 @@ class _VideoCommentsState extends State<VideoComments> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isDark = isDarkMode(context);
     return Container(
       height: size.height * 0.75,
       clipBehavior: Clip.hardEdge,
@@ -41,9 +43,9 @@ class _VideoCommentsState extends State<VideoComments> {
         borderRadius: BorderRadius.circular(Sizes.size14),
       ),
       child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: isDark ? null : Colors.grey.shade50,
         appBar: AppBar(
-          backgroundColor: Colors.grey.shade50,
+          backgroundColor: isDark ? null : Colors.grey.shade50,
           automaticallyImplyLeading: false,
           title: Text("22769 comment"),
           actions: [
@@ -72,7 +74,12 @@ class _VideoCommentsState extends State<VideoComments> {
                   itemBuilder: (context, index) => Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CircleAvatar(radius: 18, child: Text("테렌")),
+                      CircleAvatar(
+                        radius: 18,
+                        backgroundColor: isDark ? Colors.grey.shade500 : null,
+                        foregroundColor: Colors.white,
+                        child: Text("테렌"),
+                      ),
                       Gaps.h10,
                       Expanded(
                         child: Column(
@@ -89,10 +96,7 @@ class _VideoCommentsState extends State<VideoComments> {
                             Gaps.v3,
                             Text(
                               "That's not it But I like that itThat'like that it",
-                              style: TextStyle(
-                                fontSize: Sizes.size14,
-                                color: Colors.grey.shade500,
-                              ),
+                              style: TextStyle(fontSize: Sizes.size14),
                             ),
                           ],
                         ),
@@ -122,83 +126,102 @@ class _VideoCommentsState extends State<VideoComments> {
               Positioned(
                 bottom: 0,
                 width: size.width,
-                child: BottomAppBar(
-                  color: Colors.white,
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 18,
-                        backgroundColor: Colors.grey.shade500,
-                        foregroundColor: Colors.white,
-                        child: Text("테렌"),
-                      ),
-                      Gaps.h10,
-                      Expanded(
-                        child: SizedBox(
-                          height: Sizes.size44,
-                          child: TextField(
-                            onTap: _onStartWriting,
-                            expands: true,
-                            minLines: null,
-                            maxLines: null,
-                            textInputAction: TextInputAction.newline,
-                            cursorColor: Theme.of(context).primaryColor,
-                            decoration: InputDecoration(
-                              hintText: "Write a comment...",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  Sizes.size12,
+                child: Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: Sizes.size16,
+                      right: Sizes.size16,
+                      top: Sizes.size10,
+                      bottom: Sizes.size48,
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: Colors.grey.shade500,
+                          foregroundColor: Colors.white,
+                          child: Text("테렌"),
+                        ),
+                        Gaps.h10,
+                        Expanded(
+                          child: SizedBox(
+                            height: Sizes.size44,
+                            child: TextField(
+                              onTap: _onStartWriting,
+                              expands: true,
+                              minLines: null,
+                              maxLines: null,
+                              textInputAction: TextInputAction.newline,
+                              cursorColor: Theme.of(context).primaryColor,
+                              decoration: InputDecoration(
+                                hintText: "Write a comment...",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    Sizes.size12,
+                                  ),
+                                  borderSide: BorderSide.none,
                                 ),
-                                borderSide: BorderSide.none,
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey.shade200,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: Sizes.size12,
-                              ),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.only(
-                                  right: Sizes.size14,
+                                filled: true,
+                                fillColor: isDark
+                                    ? Colors.grey.shade800
+                                    : Colors.grey.shade300,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: Sizes.size12,
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    FaIcon(
-                                      FontAwesomeIcons.at,
-                                      size: Sizes.size20,
-                                      color: Colors.grey.shade900,
-                                    ),
-                                    Gaps.h14,
-                                    FaIcon(
-                                      FontAwesomeIcons.gift,
-                                      size: Sizes.size20,
-                                      color: Colors.grey.shade900,
-                                    ),
-                                    Gaps.h14,
-                                    FaIcon(
-                                      FontAwesomeIcons.faceSmile,
-                                      size: Sizes.size20,
-                                      color: Colors.grey.shade900,
-                                    ),
-                                    if (_isWriting) ...[
-                                      Gaps.h14,
-                                      GestureDetector(
-                                        onTap: _stopWriting,
-                                        child: FaIcon(
-                                          FontAwesomeIcons.circleArrowUp,
-                                          size: Sizes.size20,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
+                                suffixIcon: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: Sizes.size14,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      FaIcon(
+                                        FontAwesomeIcons.at,
+                                        size: Sizes.size20,
+                                        color: isDark
+                                            ? Colors.grey.shade500
+                                            : Colors.grey.shade900,
                                       ),
+                                      Gaps.h14,
+                                      FaIcon(
+                                        FontAwesomeIcons.gift,
+                                        size: Sizes.size20,
+                                        color: isDark
+                                            ? Colors.grey.shade500
+                                            : Colors.grey.shade900,
+                                      ),
+                                      Gaps.h14,
+                                      FaIcon(
+                                        FontAwesomeIcons.faceSmile,
+                                        size: Sizes.size20,
+                                        color: isDark
+                                            ? Colors.grey.shade500
+                                            : Colors.grey.shade900,
+                                      ),
+                                      if (_isWriting) ...[
+                                        Gaps.h14,
+                                        GestureDetector(
+                                          // 메세지 전송 버튼
+                                          onTap: _stopWriting,
+                                          child: FaIcon(
+                                            FontAwesomeIcons.circleArrowUp,
+                                            size: Sizes.size20,
+                                            color: Theme.of(
+                                              context,
+                                            ).primaryColor,
+                                          ),
+                                        ),
+                                      ],
                                     ],
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

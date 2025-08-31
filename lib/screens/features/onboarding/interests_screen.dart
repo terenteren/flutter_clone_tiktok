@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/constants/utils.dart';
+import 'package:tiktok_clone/screens/features/authentication/widgets/form_button.dart';
 import 'package:tiktok_clone/screens/features/onboarding/tutorial_screen.dart';
 import 'package:tiktok_clone/screens/features/onboarding/widgets/interest_button.dart';
 
@@ -89,14 +91,17 @@ class _InterestsScreenState extends State<InterestsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDart = isDarkMode(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         title: AnimatedOpacity(
           opacity: _showTitle ? 1 : 0,
           duration: Duration(milliseconds: 300),
-          child: Text("Choose your interests"),
+          child: Text(
+            "Choose your interests",
+            style: TextStyle(color: isDart ? Colors.white : Colors.black),
+          ),
         ),
       ),
       body: Scrollbar(
@@ -139,29 +144,17 @@ class _InterestsScreenState extends State<InterestsScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        height: 140,
-        elevation: 2,
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: Sizes.size40,
-            top: Sizes.size16,
-            left: Sizes.size24,
-            right: Sizes.size24,
-          ),
-          child: GestureDetector(
-            onTap: _onNextTap,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: Sizes.size20),
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: Text(
-                "Next",
-                style: TextStyle(color: Colors.white, fontSize: Sizes.size16),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
+
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          bottom: Sizes.size32,
+          left: Sizes.size24,
+          right: Sizes.size24,
+          top: Sizes.size16,
+        ),
+        child: GestureDetector(
+          onTap: _onNextTap,
+          child: FormButton(disabled: false),
         ),
       ),
     );

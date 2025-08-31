@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/constants/utils.dart';
 import 'package:tiktok_clone/screens/features/authentication/login_screen.dart';
 import 'package:tiktok_clone/screens/features/authentication/widgets/auth_button.dart';
 
@@ -33,13 +34,13 @@ class SignUpScreen extends StatelessWidget {
                     ),
                   ),
                   Gaps.v20,
-                  Text(
-                    "Create a profile, follow other accounts, make your own videos, and more.",
-                    style: TextStyle(
-                      fontSize: Sizes.size16,
-                      color: Colors.black45,
+                  Opacity(
+                    opacity: isDarkMode(context) ? 0.5 : 1,
+                    child: Text(
+                      "Create a profile, follow other accounts, make your own videos, and more.",
+                      style: TextStyle(fontSize: Sizes.size16),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                   Gaps.v40,
                   if (orientation == Orientation.portrait) ...[
@@ -80,15 +81,20 @@ class SignUpScreen extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: BottomAppBar(
-            color: Colors.grey.shade50,
-            elevation: 2,
+          bottomNavigationBar: Container(
+            color: isDarkMode(context) ? null : Colors.grey.shade50,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: Sizes.size10),
+              padding: const EdgeInsets.only(
+                top: Sizes.size32,
+                bottom: Sizes.size64,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Already have an account?"),
+                  Text(
+                    "Already have an account?",
+                    style: TextStyle(fontSize: Sizes.size16),
+                  ),
                   Gaps.h5,
                   GestureDetector(
                     onTap: () => _onLoginTap(context),

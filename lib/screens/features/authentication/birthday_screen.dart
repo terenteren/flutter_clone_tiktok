@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/constants/utils.dart';
 import 'package:tiktok_clone/screens/features/authentication/widgets/form_button.dart';
 import 'package:tiktok_clone/screens/features/onboarding/interests_screen.dart';
 
@@ -65,11 +66,13 @@ class _BirthdayScreenState extends State<BirthdayScreen> {
             Gaps.v8,
             Text(
               "Your birthday won't be shown publicly.",
-              style: TextStyle(fontSize: Sizes.size16, color: Colors.black54),
+              style: TextStyle(fontSize: Sizes.size16),
             ),
             Gaps.v16,
             TextField(
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(
+                color: isDarkMode(context) ? Colors.white : Colors.black,
+              ),
               enabled: false,
               controller: _birthdayController,
               decoration: InputDecoration(

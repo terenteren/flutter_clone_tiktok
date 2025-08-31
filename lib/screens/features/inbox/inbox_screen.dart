@@ -48,11 +48,7 @@ class _InboxScreenState extends State<InboxScreen> {
                 fontSize: Sizes.size18,
               ),
             ),
-            trailing: FaIcon(
-              FontAwesomeIcons.chevronRight,
-              size: Sizes.size16,
-              color: Colors.black,
-            ),
+            trailing: FaIcon(FontAwesomeIcons.chevronRight, size: Sizes.size16),
           ),
           Container(
             color: Colors.grey.shade200,
@@ -78,13 +74,9 @@ class _InboxScreenState extends State<InboxScreen> {
             ),
             subtitle: Text(
               "messages from followers will appear here",
-              style: TextStyle(fontSize: Sizes.size12, color: Colors.black54),
+              style: TextStyle(fontSize: Sizes.size12),
             ),
-            trailing: FaIcon(
-              FontAwesomeIcons.chevronRight,
-              size: Sizes.size16,
-              color: Colors.black,
-            ),
+            trailing: FaIcon(FontAwesomeIcons.chevronRight, size: Sizes.size16),
           ),
           Container(
             color: Colors.grey.shade200,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/constants/utils.dart';
 import 'package:tiktok_clone/screens/features/authentication/widgets/auth_button.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -28,10 +29,13 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               Gaps.v20,
-              Text(
-                "Nanage your account, check notifications, comment on videos, and more.",
-                style: TextStyle(fontSize: Sizes.size16, color: Colors.black45),
-                textAlign: TextAlign.center,
+              Opacity(
+                opacity: 0.7,
+                child: Text(
+                  "Nanage your account, check notifications, comment on videos, and more.",
+                  style: TextStyle(fontSize: Sizes.size16),
+                  textAlign: TextAlign.center,
+                ),
               ),
               Gaps.v40,
               AuthButton(
@@ -49,15 +53,20 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.grey.shade50,
-        elevation: 2,
+      bottomNavigationBar: Container(
+        color: isDarkMode(context) ? null : Colors.grey.shade50,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: Sizes.size10),
+          padding: const EdgeInsets.only(
+            top: Sizes.size32,
+            bottom: Sizes.size64,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Don't have an account?"),
+              Text(
+                "Don't have an account?",
+                style: TextStyle(fontSize: Sizes.size16),
+              ),
               Gaps.h5,
               GestureDetector(
                 onTap: () => _onLoginTap(context),

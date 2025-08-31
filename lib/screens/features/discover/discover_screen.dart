@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoint.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/constants/utils.dart';
 
 final tabs = ["Top", "Users", "Videos", "Sounds", "LIVE", "Shopping", "Brands"];
 
@@ -51,6 +52,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   controller: _textEditingController,
                   onChanged: _onSearchChanged,
                   onSubmitted: _onSearchSubmitted,
+                  style: TextStyle(
+                    color: isDarkMode(context) ? Colors.white : Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -69,9 +73,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
-                    indicatorColor: Colors.black,
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.grey.shade500,
+                    // indicatorColor: Theme.of(
+                    //   context,
+                    // ).tabBarTheme.indicatorColor,
                     tabs: [for (var tab in tabs) Tab(text: tab)],
                   ),
                 ),
@@ -116,12 +120,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
                       Text(
                         "${constraints.maxWidth} This is a very long caption for my video that I'm uploading just now #video #myvideo #fyp #flutter #dartlang",
-                        style: TextStyle(
-                          fontSize: Sizes.size16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: Sizes.size18,
+                          fontWeight: FontWeight.bold,
+                          height: 1.1,
+                        ),
                       ),
                       Gaps.v8,
                       if (constraints.maxWidth < 200 ||
@@ -143,6 +148,11 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                               Expanded(
                                 child: Text(
                                   "My avatar is going to be very long",
+                                  style: TextStyle(
+                                    color: isDarkMode(context)
+                                        ? Colors.grey.shade300
+                                        : Colors.grey.shade600,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),

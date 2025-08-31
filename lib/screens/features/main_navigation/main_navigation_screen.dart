@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoint.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
+import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/constants/utils.dart';
 import 'package:tiktok_clone/screens/features/discover/discover_screen.dart';
 import 'package:tiktok_clone/screens/features/inbox/inbox_screen.dart';
 import 'package:tiktok_clone/screens/features/main_navigation/widgets/nav_tab.dart';
@@ -46,10 +48,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    
+    final isDark = isDarkMode(context);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: _selectedIndex == 0 ? Colors.black : Colors.white,
+      backgroundColor: _selectedIndex == 0 || isDark
+          ? Colors.black
+          : Colors.white,
       body: Center(
         child: Container(
           constraints: BoxConstraints(
@@ -57,10 +62,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
           child: Stack(
             children: [
-              Offstage(offstage: _selectedIndex != 0, child: VideoTimelineScreen()),
+              Offstage(
+                offstage: _selectedIndex != 0,
+                child: VideoTimelineScreen(),
+              ),
               Offstage(offstage: _selectedIndex != 1, child: DiscoverScreen()),
               Offstage(offstage: _selectedIndex != 3, child: InboxScreen()),
-              Offstage(offstage: _selectedIndex != 4, child: UserProfileScreen()),
+              Offstage(
+                offstage: _selectedIndex != 4,
+                child: UserProfileScreen(),
+              ),
             ],
           ),
         ),
@@ -76,51 +87,54 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             ),
           ],
         ),
-        child: BottomAppBar(
-          elevation: 0,
-          color: _selectedIndex == 0 ? Colors.black : Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              NavTab(
-                text: "Home",
-                isSElected: _selectedIndex == 0,
-                icon: FontAwesomeIcons.house,
-                selectedIcon: FontAwesomeIcons.house,
-                onTap: () => _onTap(0),
-                selectedIndex: _selectedIndex,
-              ),
-              NavTab(
-                text: "Discover",
-                isSElected: _selectedIndex == 1,
-                icon: FontAwesomeIcons.compass,
-                selectedIcon: FontAwesomeIcons.solidCompass,
-                onTap: () => _onTap(1),
-                selectedIndex: _selectedIndex,
-              ),
-              Gaps.h24,
-              GestureDetector(
-                onTap: _onPostVideoButtonTap,
-                child: PostVideoButton(inverted: _selectedIndex != 0),
-              ),
-              Gaps.h24,
-              NavTab(
-                text: "Inbox",
-                isSElected: _selectedIndex == 3,
-                icon: FontAwesomeIcons.message,
-                selectedIcon: FontAwesomeIcons.solidMessage,
-                onTap: () => _onTap(3),
-                selectedIndex: _selectedIndex,
-              ),
-              NavTab(
-                text: "Profile",
-                isSElected: _selectedIndex == 4,
-                icon: FontAwesomeIcons.user,
-                selectedIcon: FontAwesomeIcons.solidUser,
-                onTap: () => _onTap(4),
-                selectedIndex: _selectedIndex,
-              ),
-            ],
+        child: Container(
+          color: _selectedIndex == 0 || isDark ? Colors.black : Colors.white,
+          padding: EdgeInsets.only(bottom: Sizes.size32),
+          child: Padding(
+            padding: const EdgeInsets.all(Sizes.size12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                NavTab(
+                  text: "Home",
+                  isSElected: _selectedIndex == 0,
+                  icon: FontAwesomeIcons.house,
+                  selectedIcon: FontAwesomeIcons.house,
+                  onTap: () => _onTap(0),
+                  selectedIndex: _selectedIndex,
+                ),
+                NavTab(
+                  text: "Discover",
+                  isSElected: _selectedIndex == 1,
+                  icon: FontAwesomeIcons.compass,
+                  selectedIcon: FontAwesomeIcons.solidCompass,
+                  onTap: () => _onTap(1),
+                  selectedIndex: _selectedIndex,
+                ),
+                Gaps.h24,
+                GestureDetector(
+                  onTap: _onPostVideoButtonTap,
+                  child: PostVideoButton(inverted: _selectedIndex != 0),
+                ),
+                Gaps.h24,
+                NavTab(
+                  text: "Inbox",
+                  isSElected: _selectedIndex == 3,
+                  icon: FontAwesomeIcons.message,
+                  selectedIcon: FontAwesomeIcons.solidMessage,
+                  onTap: () => _onTap(3),
+                  selectedIndex: _selectedIndex,
+                ),
+                NavTab(
+                  text: "Profile",
+                  isSElected: _selectedIndex == 4,
+                  icon: FontAwesomeIcons.user,
+                  selectedIcon: FontAwesomeIcons.solidUser,
+                  onTap: () => _onTap(4),
+                  selectedIndex: _selectedIndex,
+                ),
+              ],
+            ),
           ),
         ),
       ),
