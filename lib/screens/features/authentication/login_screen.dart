@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/constants/utils.dart';
 import 'package:tiktok_clone/screens/features/authentication/widgets/auth_button.dart';
 
 class LoginScreen extends StatelessWidget {
+  static String routeName = "/login_main";
   const LoginScreen({super.key});
 
-  void _onLoginTap(BuildContext context) {
-    Navigator.of(context).pop();
+  void _onSignUpTap(BuildContext context) {
+    context.pop();
   }
 
   @override
@@ -69,7 +71,7 @@ class LoginScreen extends StatelessWidget {
               ),
               Gaps.h5,
               GestureDetector(
-                onTap: () => _onLoginTap(context),
+                onTap: () => _onSignUpTap(context),
                 child: Text(
                   "Sign up",
                   style: TextStyle(

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
-import 'package:tiktok_clone/screens/features/authentication/sign_up_screen.dart';
-import 'package:tiktok_clone/screens/features/inbox/activity_screen.dart';
-import 'package:tiktok_clone/screens/features/main_navigation/main_navigation_screen.dart';
-import 'package:tiktok_clone/screens/features/settings/settings_screen.dart';
+import 'package:tiktok_clone/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  usePathUrlStrategy(); // Path URL 전략 사용 (/#/ 없이)
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -24,7 +23,8 @@ class TikTokApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     S.load(Locale("en"));
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
       title: 'Tiktok Clone',
       localizationsDelegates: [
@@ -171,7 +171,15 @@ class TikTokApp extends StatelessWidget {
         bottomAppBarTheme: BottomAppBarThemeData(color: Colors.grey.shade900),
         primaryColor: Color(0xFFE9435A),
       ),
-      home: SignUpScreen(),
+      // initialRoute: "/",
+      // routes: {
+      //   "/": (context) => const SignUpScreen(),
+      //   SignUpScreen.routeName: (context) => const SignUpScreen(),
+      //   UsernameScreen.routeName: (context) => const UsernameScreen(),
+      //   LoginScreen.routeName: (context) => const LoginScreen(),
+      //   LoginFormScreen.routeName: (context) => const LoginFormScreen(),
+      //   EmailScreen.routeName: (context) => const EmailScreen(),
+      // },
     );
   }
 }

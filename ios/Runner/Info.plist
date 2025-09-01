@@ -55,5 +55,11 @@
 		<string>https</string>
 		<string>http</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>TikTok Clone needs camera access to record videos</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>TikTok Clone needs microphone access to record audio for videos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>TikTok Clone needs photo library access to save videos</string>
 </dict>
 </plist>

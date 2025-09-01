@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/screens/features/authentication/login_form_screen.dart';
 import 'package:tiktok_clone/screens/features/authentication/username_screen.dart';
@@ -17,24 +18,26 @@ class AuthButton extends StatelessWidget {
   });
 
   void onTap(BuildContext context) {
-    if (type.contains("login")) {
-      _onEmailLoginTap(context);
-    } else if (type == "email") {
-      Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (context) => const UsernameScreen()));
-    } else if (type == "apple") {
-      // Handle Apple sign-in
-    } else {
-      // Handle other types if necessary
-    }
-  }
-
-  void _onEmailLoginTap(BuildContext context) {
-    if (type == "login_email") {
-      Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (context) => const LoginFormScreen()));
+    switch (type) {
+      case "email":
+        // Sign up with email
+        context.push(UsernameScreen.routeName);
+        break;
+      case "apple":
+        // Sign up with Apple
+        // TODO: Implement Apple sign up
+        break;
+      case "login_email":
+        // Login with email
+        context.push(LoginFormScreen.routeName);
+        break;
+      case "login_apple":
+        // Login with Apple
+        // TODO: Implement Apple login
+        break;
+      default:
+        // Handle other types if necessary
+        break;
     }
   }
 

@@ -9,7 +9,13 @@ import 'package:tiktok_clone/screens/features/users/widgets/user_stats_bar.dart'
 import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({super.key});
+  final String username;
+  final String tab;
+  const UserProfileScreen({
+    super.key,
+    required this.username,
+    required this.tab,
+  });
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -36,13 +42,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       body: SafeArea(
         child: DefaultTabController(
+          initialIndex: widget.tab == "likes" ? 1 : 0,
           length: 2,
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
                 SliverAppBar(
                   title: Text(
-                    "FIFA",
+                    widget.username,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: Sizes.size20,
@@ -76,7 +83,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "@테렌",
+                            "@${widget.username}",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: Sizes.size18,
