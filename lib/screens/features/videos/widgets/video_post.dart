@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:tiktok_clone/screens/features/videos/widgets/video_button.dart';
 import 'package:tiktok_clone/screens/features/videos/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
@@ -302,13 +303,16 @@ class _VideoPostState extends State<VideoPost>
                   child: Text("키프트"),
                 ),
                 Gaps.v24,
-                VideoButton(icon: FontAwesomeIcons.solidHeart, text: "2.9M"),
+                VideoButton(
+                  icon: FontAwesomeIcons.solidHeart,
+                  text: S.of(context).likeCount(123123),
+                ),
                 Gaps.v24,
                 GestureDetector(
                   onTap: () => _onCommentsTap(context),
                   child: VideoButton(
                     icon: FontAwesomeIcons.solidComment,
-                    text: "33K",
+                    text: S.of(context).commentCount(232322323232323233),
                   ),
                 ),
                 Gaps.v24,

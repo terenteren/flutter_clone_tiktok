@@ -1,0 +1,31 @@
+{
+  "@@locale": "ko",
+  "signUpTitle": "{nameOfTheApp}에 가입하기",
+  "@signUpTitle": {
+    "description": "회원 가입 화면의 제목으로, 앱 이름이 포함되어 있습니다.",
+    "placeholders": {
+      "nameOfTheApp": {
+        "type": "String",
+        "example": "TikTok"
+      }
+    }
+  },
+  "loginTitle": "{nameOfTheApp} 로그인",
+  "@loginTitle": {
+    "description": "로그인 화면을 열 때 사람들이 보는 제목입니다.",
+    "placeholders": {
+      "nameOfTheApp": {
+        "type": "String",
+        "example": "TikTok"
+      }
+    }
+  },
+  "signUpSubTitle": "Create a profile, follow other accounts, make your own videos, and more.",
+  "EmailPasswordButton": "Use email & password",
+  "appleButton": "Continue with Apple",
+  "alreadyHaveAnAccount": "Already have an account?",
+  "logIn": "Log in",
+  "likeCount": "{potato}",
+  "commentCount": "{potato}",
+  "commentTitle": "22769 comment"
+}

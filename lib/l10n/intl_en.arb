@@ -1,0 +1,58 @@
+{
+  "@@locale": "en",
+  "signUpTitle": "Sign up for {nameOfTheApp}",
+  "@signUpTitle": {
+    "description": "Title for the sign up screen, with the name of the app included.",
+    "placeholders": {
+      "nameOfTheApp": {
+        "type": "String",
+        "example": "TikTok"
+      }
+    }
+  },
+  "loginTitle": "Login to {nameOfTheApp}",
+  "@loginTitle": {
+    "description": "The title people see when they open the log in screen.",
+    "placeholders": {
+      "nameOfTheApp": {
+        "type": "String",
+        "example": "TikTok"
+      }
+    }
+  },
+  "signUpSubTitle": "Create a profile, follow other accounts, make your own videos, and more.",
+  "EmailPasswordButton": "Use email & password",
+  "appleButton": "Continue with Apple",
+  "alreadyHaveAnAccount": "Already have an account?",
+  "logIn": "Log in",
+  "likeCount": "{potato}",
+  "@likeCount": {
+    "description": "Number of likes on a video",
+    "placeholders": {
+      "potato": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "commentCount": "{potato}",
+  "@commentCount": {
+    "description": "Number of comments on a video",
+    "placeholders": {
+      "potato": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "commentTitle": "{potato} comment",
+  "@commentTitle": {
+    "description": "Anything you want",
+    "placeholders": {
+      "potato": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  }
+}

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:tiktok_clone/screens/features/authentication/sign_up_screen.dart';
 import 'package:tiktok_clone/screens/features/inbox/activity_screen.dart';
 import 'package:tiktok_clone/screens/features/main_navigation/main_navigation_screen.dart';
+import 'package:tiktok_clone/screens/features/settings/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,9 +23,21 @@ class TikTokApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    S.load(Locale("en"));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Tiktok Clone',
+      localizationsDelegates: [
+        S.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en'), // English, no country code
+        Locale('ko'), // Spanish, no country code
+        // Add other supported locales here
+      ],
       themeMode: ThemeMode.system,
       theme: ThemeData(
         useMaterial3: true,
@@ -156,7 +171,7 @@ class TikTokApp extends StatelessWidget {
         bottomAppBarTheme: BottomAppBarThemeData(color: Colors.grey.shade900),
         primaryColor: Color(0xFFE9435A),
       ),
-      home: MainNavigationScreen(),
+      home: SignUpScreen(),
     );
   }
 }
