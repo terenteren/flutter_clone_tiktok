@@ -4,7 +4,12 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 
 class ChatDetailScreen extends StatefulWidget {
-  const ChatDetailScreen({super.key});
+  static const String routeName = "chatDetail";
+  static const String routeURL = ":chatId";
+
+  final String chatId;
+
+  const ChatDetailScreen({super.key, required this.chatId});
 
   @override
   State<ChatDetailScreen> createState() => _ChatDetailScreenState();
@@ -39,6 +44,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: ListTile(
@@ -52,7 +58,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             ),
             child: Text("테렌"),
           ),
-          title: Text("테렌", style: TextStyle(fontWeight: FontWeight.w600)),
+          title: Text(
+            "테렌 (${widget.chatId})",
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           subtitle: Text("Active 3h ago"),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -113,7 +122,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       child: Text(
                         "this is a message!",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: isDark ? Colors.black : Colors.white,
                           fontSize: Sizes.size16,
                         ),
                       ),
@@ -155,11 +164,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                 controller: _textController,
                                 cursorColor: Theme.of(context).primaryColor,
                                 textAlignVertical: TextAlignVertical.center,
-                                style: TextStyle(fontSize: Sizes.size16),
+                                style: TextStyle(
+                                  fontSize: Sizes.size16,
+                                  color: Colors.black,
+                                ),
                                 decoration: InputDecoration(
                                   hintText: "Send a message...",
                                   hintStyle: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDark
+                                        ? Colors.grey.shade500
+                                        : Colors.grey.shade400,
                                     fontSize: Sizes.size14,
                                   ),
                                   border: InputBorder.none,

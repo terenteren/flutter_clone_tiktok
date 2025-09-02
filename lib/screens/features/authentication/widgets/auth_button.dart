@@ -21,7 +21,10 @@ class AuthButton extends StatelessWidget {
     switch (type) {
       case "email":
         // Sign up with email
-        context.push(UsernameScreen.routeName);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UsernameScreen()),
+        );
         break;
       case "apple":
         // Sign up with Apple
@@ -29,7 +32,10 @@ class AuthButton extends StatelessWidget {
         break;
       case "login_email":
         // Login with email
-        context.push(LoginFormScreen.routeName);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginFormScreen()),
+        );
         break;
       case "login_apple":
         // Login with Apple

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
@@ -49,6 +51,9 @@ class _VideoPostState extends State<VideoPost>
   void _initVideoPlayer() async {
     if (!mounted) return;
 
+    // async 작업 전에 context 값 미리 읽기
+    final isMuted = context.read<VideoConfig>().isMuted;
+
     try {
       // 로컬 assets 비디오 사용
       _videoPlayerController = VideoPlayerController.asset(
@@ -57,9 +62,9 @@ class _VideoPostState extends State<VideoPost>
 
       await _videoPlayerController.initialize();
       await _videoPlayerController.setLooping(true);
-      if (kIsWeb) {
-        await _videoPlayerController.setVolume(0);
-      }
+      
+      // 초기 음소거 설정 (웹 또는 설정값에 따라)
+      await _videoPlayerController.setVolume(kIsWeb ? 0 : (isMuted ? 0 : 1.0));
 
       _videoPlayerController.addListener(_onVideoChange);
 
@@ -67,7 +72,8 @@ class _VideoPostState extends State<VideoPost>
         setState(() {
           _isInitialized = true;
         });
-        await _videoPlayerController.play();
+        // 초기 자동 재생 제거 - VisibilityDetector가 처리하도록 함
+        // await _videoPlayerController.play();
       }
     } catch (e) {
       if (mounted) {
@@ -105,23 +111,32 @@ class _VideoPostState extends State<VideoPost>
     if (!mounted) return;
     if (!_isInitialized) return;
 
-    // 50% 이상 보이면 재생, 그 이하면 일시정지
+    // 50% 이상 보이면 재생, 그 이하면 일시정지 및 음소거
     if (info.visibleFraction > 0.5) {
       // 사용자가 수동으로 일시정지한 경우 자동 재생하지 않음
       if (_isPaused) return;
-      // 50% 이상 보일 때 자동 재생
+      // 50% 이상 보일 때 자동 재생 및 음소거 상태 복원
       if (!_videoPlayerController.value.isPlaying) {
+        final isMuted = context.read<VideoConfig>().isMuted;
+        _videoPlayerController.setVolume(isMuted ? 0 : 1.0);
         _videoPlayerController.play();
       }
     } else {
-      // 50% 미만으로 보이면 일시정지
+      // 50% 미만으로 보이면 일시정지 및 음소거
       if (_videoPlayerController.value.isPlaying) {
         _videoPlayerController.pause();
       }
+      // 화면에 보이지 않을 때는 항상 음소거
+      _videoPlayerController.setVolume(0);
     }
 
     // 화면에서 완전히 벗어났을 때 (다른 탭으로 이동 등) 상태 동기화
-    if (info.visibleFraction == 0 && _videoPlayerController.value.isPlaying) {
+    if (info.visibleFraction == 0) {
+      // 비디오 재생 중지 및 음소거
+      if (_videoPlayerController.value.isPlaying) {
+        _videoPlayerController.pause();
+      }
+      _videoPlayerController.setVolume(0);
       // _isPaused 상태를 true로 업데이트하여 돌아왔을 때 자동 재생 방지
       setState(() {
         _isPaused = true;
@@ -158,17 +173,17 @@ class _VideoPostState extends State<VideoPost>
     _onTogglePause();
   }
 
-  void _onVolumeTap() {
-    if (!mounted) return;
-    if (!_isInitialized) return;
+  // void _onVolumeTap() {
+  //   if (!mounted) return;
+  //   if (!_isInitialized) return;
 
-    if (_videoPlayerController.value.volume == 0) {
-      _videoPlayerController.setVolume(1.0);
-    } else {
-      _videoPlayerController.setVolume(0.0);
-    }
-    setState(() {});
-  }
+  //   if (_videoPlayerController.value.volume == 0) {
+  //     _videoPlayerController.setVolume(1.0);
+  //   } else {
+  //     _videoPlayerController.setVolume(0.0);
+  //   }
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -250,6 +265,26 @@ class _VideoPostState extends State<VideoPost>
             ),
           ),
           Positioned(
+            left: 30,
+            top: 60,
+            child: IconButton(
+              icon: FaIcon(
+                context.watch<VideoConfig>().isMuted
+                    ? FontAwesomeIcons.volumeOff
+                    : FontAwesomeIcons.volumeHigh,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                context.read<VideoConfig>().toggleIsMuted();
+                if (context.read<VideoConfig>().isMuted) {
+                  _videoPlayerController.setVolume(0);
+                } else {
+                  _videoPlayerController.setVolume(1.0);
+                }
+              },
+            ),
+          ),
+          Positioned(
             bottom: 20,
             left: 10,
             child: Column(
@@ -271,23 +306,23 @@ class _VideoPostState extends State<VideoPost>
               ],
             ),
           ),
-          Positioned(
-            top: 20,
-            right: 10,
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap: () => _onVolumeTap(),
-                  child: VideoButton(
-                    icon: _videoPlayerController.value.volume == 0
-                        ? FontAwesomeIcons.volumeXmark
-                        : FontAwesomeIcons.volumeOff,
-                    text: "",
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Positioned(
+          //   top: 90,
+          //   right: 30,
+          //   child: Column(
+          //     children: [
+          //       GestureDetector(
+          //         onTap: () => _onVolumeTap(),
+          //         child: VideoButton(
+          //           icon: _videoPlayerController.value.volume == 0
+          //               ? FontAwesomeIcons.volumeXmark
+          //               : FontAwesomeIcons.volumeOff,
+          //           text: "",
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           Positioned(
             bottom: 20,
             right: 10,

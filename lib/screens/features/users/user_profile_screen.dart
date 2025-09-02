@@ -101,7 +101,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       ),
                       Gaps.v24,
                       SizedBox(
-                        height: Sizes.size48,
+                        height: Sizes.size56,
                         child: UserStatsBar(
                           following: "97",
                           followers: "10M",

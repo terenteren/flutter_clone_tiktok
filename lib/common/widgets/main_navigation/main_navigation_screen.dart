@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/breakpoint.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/constants/utils.dart';
 import 'package:tiktok_clone/screens/features/discover/discover_screen.dart';
 import 'package:tiktok_clone/screens/features/inbox/inbox_screen.dart';
-import 'package:tiktok_clone/screens/features/main_navigation/widgets/nav_tab.dart';
-import 'package:tiktok_clone/screens/features/main_navigation/widgets/post_video_button.dart';
+import 'package:tiktok_clone/common/widgets/main_navigation/widgets/nav_tab.dart';
+import 'package:tiktok_clone/common/widgets/main_navigation/widgets/post_video_button.dart';
 import 'package:tiktok_clone/screens/features/users/user_profile_screen.dart';
+import 'package:tiktok_clone/screens/features/videos/video_recording_screen.dart';
 import 'package:tiktok_clone/screens/features/videos/video_timeline_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({super.key});
+  static const String routeName = "mainNavigation";
+
+  final String tab;
+
+  const MainNavigationScreen({super.key, required this.tab});
 
   @override
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
-  int _selectedIndex = 0;
+  final List<String> _tabs = ["home", "discover", "xxxx", "inbox", "profile"];
+
+  late int _selectedIndex = _tabs.indexOf(widget.tab);
 
   final screens = [
     Center(child: Text("Home", style: TextStyle(fontSize: 49))),
@@ -30,19 +38,30 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   ];
 
   void _onTap(int index) {
+    context.go("/${_tabs[index]}");
+
     setState(() {
       _selectedIndex = index;
     });
   }
 
   void _onPostVideoButtonTap() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) =>
-            Scaffold(appBar: AppBar(title: Text("Record Video"))),
-        fullscreenDialog: true,
-      ),
-    );
+    context.pushNamed(VideoRecordingScreen.routeName);
+  }
+
+  Widget _buildSelectedScreen() {
+    switch (_selectedIndex) {
+      case 0:
+        return VideoTimelineScreen();
+      case 1:
+        return DiscoverScreen();
+      case 3:
+        return InboxScreen();
+      case 4:
+        return UserProfileScreen(username: "테렌", tab: "");
+      default:
+        return Container();
+    }
   }
 
   @override
@@ -60,20 +79,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           constraints: BoxConstraints(
             maxWidth: width > Breakpoints.sm ? Breakpoints.md : double.infinity,
           ),
-          child: Stack(
-            children: [
-              Offstage(
-                offstage: _selectedIndex != 0,
-                child: VideoTimelineScreen(),
-              ),
-              Offstage(offstage: _selectedIndex != 1, child: DiscoverScreen()),
-              Offstage(offstage: _selectedIndex != 3, child: InboxScreen()),
-              Offstage(
-                offstage: _selectedIndex != 4,
-                child: UserProfileScreen(username: "테렌", tab: ""),
-              ),
-            ],
-          ),
+          child: _buildSelectedScreen(),
         ),
       ),
       bottomNavigationBar: Container(
