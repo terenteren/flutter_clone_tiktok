@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:tiktok_clone/common/widgets/video_config/video_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
-import 'package:tiktok_clone/screens/features/videos/widgets/video_button.dart';
-import 'package:tiktok_clone/screens/features/videos/widgets/video_comments.dart';
+import 'package:tiktok_clone/screens/features/videos/view_models/playback_config_vm.dart';
+import 'package:tiktok_clone/screens/features/videos/views/widgets/video_button.dart';
+import 'package:tiktok_clone/screens/features/videos/views/widgets/video_comments.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -33,6 +33,8 @@ class _VideoPostState extends State<VideoPost>
   bool _isPaused = false;
   final Duration _animationDuration = const Duration(milliseconds: 200);
   late final AnimationController _animationController;
+  late final PlaybackConfigViewModel _playbackConfigViewModel;
+  late bool _localMuted; // 현재 비디오의 로컬 음소거 상태
 
   void _onVideoChange() {
     if (!mounted) return;
@@ -51,8 +53,8 @@ class _VideoPostState extends State<VideoPost>
   void _initVideoPlayer() async {
     if (!mounted) return;
 
-    // async 작업 전에 context 값 미리 읽기
-    final isMuted = context.read<VideoConfig>().isMuted;
+    // 로컬 음소거 상태 사용
+    final isMuted = _localMuted;
 
     try {
       // 로컬 assets 비디오 사용
@@ -62,7 +64,7 @@ class _VideoPostState extends State<VideoPost>
 
       await _videoPlayerController.initialize();
       await _videoPlayerController.setLooping(true);
-      
+
       // 초기 음소거 설정 (웹 또는 설정값에 따라)
       await _videoPlayerController.setVolume(kIsWeb ? 0 : (isMuted ? 0 : 1.0));
 
@@ -88,6 +90,14 @@ class _VideoPostState extends State<VideoPost>
   @override
   void initState() {
     super.initState();
+    
+    // PlaybackConfigViewModel 참조를 먼저 저장
+    _playbackConfigViewModel = context.read<PlaybackConfigViewModel>();
+    _playbackConfigViewModel.addListener(_onPlaybackConfigChanged);
+    
+    // 로컬 음소거 상태를 Settings의 기본값으로 초기화
+    _localMuted = _playbackConfigViewModel.muted;
+    
     _initVideoPlayer();
 
     _animationController = AnimationController(
@@ -101,10 +111,29 @@ class _VideoPostState extends State<VideoPost>
 
   @override
   void dispose() {
+    // PlaybackConfigViewModel listener 제거 (저장된 참조 사용)
+    _playbackConfigViewModel.removeListener(_onPlaybackConfigChanged);
     _animationController.dispose();
     _videoPlayerController.removeListener(_onVideoChange);
     _videoPlayerController.dispose();
     super.dispose();
+  }
+
+  void _onPlaybackConfigChanged() {
+    if (!mounted) return; // mounted 체크 추가
+    
+    // Settings가 변경되면 로컬 음소거 상태도 업데이트
+    _localMuted = _playbackConfigViewModel.muted;
+    
+    if (_localMuted) {
+      _videoPlayerController.setVolume(0);
+    } else {
+      if (!_isPaused && _videoPlayerController.value.isPlaying) {
+        _videoPlayerController.setVolume(1.0);
+      }
+    }
+    
+    setState(() {}); // UI 업데이트
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
@@ -115,11 +144,15 @@ class _VideoPostState extends State<VideoPost>
     if (info.visibleFraction > 0.5) {
       // 사용자가 수동으로 일시정지한 경우 자동 재생하지 않음
       if (_isPaused) return;
-      // 50% 이상 보일 때 자동 재생 및 음소거 상태 복원
+      // 50% 이상 보일 때 자동 재생 및 로컬 음소거 상태 적용
       if (!_videoPlayerController.value.isPlaying) {
-        final isMuted = context.read<VideoConfig>().isMuted;
-        _videoPlayerController.setVolume(isMuted ? 0 : 1.0);
-        _videoPlayerController.play();
+        _videoPlayerController.setVolume(_localMuted ? 0 : 1.0);
+
+        // 자동 재생 설정이 켜져 있을 때만 재생
+        final autoplay = _playbackConfigViewModel.autoplay;
+        if (autoplay) {
+          _videoPlayerController.play();
+        }
       }
     } else {
       // 50% 미만으로 보이면 일시정지 및 음소거
@@ -269,18 +302,16 @@ class _VideoPostState extends State<VideoPost>
             top: 60,
             child: IconButton(
               icon: FaIcon(
-                context.watch<VideoConfig>().isMuted
+                _localMuted
                     ? FontAwesomeIcons.volumeOff
                     : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
               ),
               onPressed: () {
-                context.read<VideoConfig>().toggleIsMuted();
-                if (context.read<VideoConfig>().isMuted) {
-                  _videoPlayerController.setVolume(0);
-                } else {
-                  _videoPlayerController.setVolume(1.0);
-                }
+                setState(() {
+                  _localMuted = !_localMuted;
+                  _videoPlayerController.setVolume(_localMuted ? 0 : 1.0);
+                });
               },
             ),
           ),
