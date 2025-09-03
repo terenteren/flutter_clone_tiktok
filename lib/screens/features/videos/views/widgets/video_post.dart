@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
@@ -11,7 +11,7 @@ import 'package:tiktok_clone/screens/features/videos/views/widgets/video_comment
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class VideoPost extends StatefulWidget {
+class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
   final int index;
 
@@ -22,10 +22,10 @@ class VideoPost extends StatefulWidget {
   });
 
   @override
-  State<VideoPost> createState() => _VideoPostState();
+  ConsumerState<VideoPost> createState() => _VideoPostState();
 }
 
-class _VideoPostState extends State<VideoPost>
+class _VideoPostState extends ConsumerState<VideoPost>
     with SingleTickerProviderStateMixin {
   late VideoPlayerController _videoPlayerController;
   bool _isInitialized = false; // 비디오 초기화 상태
@@ -33,7 +33,6 @@ class _VideoPostState extends State<VideoPost>
   bool _isPaused = false;
   final Duration _animationDuration = const Duration(milliseconds: 200);
   late final AnimationController _animationController;
-  late final PlaybackConfigViewModel _playbackConfigViewModel;
   late bool _localMuted; // 현재 비디오의 로컬 음소거 상태
 
   void _onVideoChange() {
@@ -90,14 +89,10 @@ class _VideoPostState extends State<VideoPost>
   @override
   void initState() {
     super.initState();
-    
-    // PlaybackConfigViewModel 참조를 먼저 저장
-    _playbackConfigViewModel = context.read<PlaybackConfigViewModel>();
-    _playbackConfigViewModel.addListener(_onPlaybackConfigChanged);
-    
+
     // 로컬 음소거 상태를 Settings의 기본값으로 초기화
-    _localMuted = _playbackConfigViewModel.muted;
-    
+    _localMuted = ref.read(playbackConfigProvider).muted;
+
     _initVideoPlayer();
 
     _animationController = AnimationController(
@@ -111,29 +106,10 @@ class _VideoPostState extends State<VideoPost>
 
   @override
   void dispose() {
-    // PlaybackConfigViewModel listener 제거 (저장된 참조 사용)
-    _playbackConfigViewModel.removeListener(_onPlaybackConfigChanged);
     _animationController.dispose();
     _videoPlayerController.removeListener(_onVideoChange);
     _videoPlayerController.dispose();
     super.dispose();
-  }
-
-  void _onPlaybackConfigChanged() {
-    if (!mounted) return; // mounted 체크 추가
-    
-    // Settings가 변경되면 로컬 음소거 상태도 업데이트
-    _localMuted = _playbackConfigViewModel.muted;
-    
-    if (_localMuted) {
-      _videoPlayerController.setVolume(0);
-    } else {
-      if (!_isPaused && _videoPlayerController.value.isPlaying) {
-        _videoPlayerController.setVolume(1.0);
-      }
-    }
-    
-    setState(() {}); // UI 업데이트
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
@@ -149,7 +125,7 @@ class _VideoPostState extends State<VideoPost>
         _videoPlayerController.setVolume(_localMuted ? 0 : 1.0);
 
         // 자동 재생 설정이 켜져 있을 때만 재생
-        final autoplay = _playbackConfigViewModel.autoplay;
+        final autoplay = ref.read(playbackConfigProvider).autoplay;
         if (autoplay) {
           _videoPlayerController.play();
         }
@@ -220,6 +196,17 @@ class _VideoPostState extends State<VideoPost>
 
   @override
   Widget build(BuildContext context) {
+    // Settings의 음소거 상태를 감지하고 로컬 상태 업데이트
+    ref.listen(playbackConfigProvider, (previous, next) {
+      if (!mounted) return;
+      if (previous?.muted != next.muted) {
+        setState(() {
+          _localMuted = next.muted;
+          _videoPlayerController.setVolume(_localMuted ? 0 : 1.0);
+        });
+      }
+    });
+    
     return VisibilityDetector(
       key: Key("${widget.index}"),
       onVisibilityChanged: _onVisibilityChanged,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "791355881093",
+    "project_id": "kift-tiktok-clone-v1",
+    "storage_bucket": "kift-tiktok-clone-v1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791355881093:android:63e2547f0080d77ce09bec",
+        "android_client_info": {
+          "package_name": "com.example.tiktok_clone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDqR7Pjk5u1BsvUnV0rvTiGBpQWR5kUG0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

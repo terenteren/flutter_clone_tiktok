@@ -1,11 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/firebase_options.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:tiktok_clone/router.dart';
 import 'package:tiktok_clone/screens/features/videos/repos/video_playback_config_repo.dart';
@@ -16,49 +18,47 @@ void main() async {
 
   usePathUrlStrategy(); // Path URL 전략 사용 (/#/ 없이)
 
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  SharedPreferences? preferences;
+  late final VideoPlaybackConfigRepository repository;
+
   try {
-    preferences = await SharedPreferences.getInstance();
-    // 개발 중 테스트를 위해 기존 값 삭제 (나중에 이 줄을 제거하세요)
-    // await preferences.remove('muted');
-    // await preferences.remove('autoplay');
-    // print('[DEBUG] SharedPreferences cleared for muted and autoplay');
+    final preferences = await SharedPreferences.getInstance();
+    repository = VideoPlaybackConfigRepository(preferences);
   } catch (e) {
     if (kDebugMode) {
       print('SharedPreferences 초기화 실패: $e');
     }
-    // SharedPreferences 초기화가 실패한 경우, null로 처리
+    // SharedPreferences 초기화 실패 시 에러 처리
+    // 실제 앱에서는 더 나은 에러 처리가 필요할 수 있습니다
+    return runApp(
+      const MaterialApp(
+        home: Scaffold(body: Center(child: Text('앱 초기화 실패. 앱을 다시 시작해주세요.'))),
+      ),
+    );
   }
 
-  final repository = preferences != null
-      ? VideoPlaybackConfigRepository(preferences)
-      : null; // 레포지토리 생성
-
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => repository != null
-              ? PlaybackConfigViewModel(repository)
-              : PlaybackConfigViewModel.withoutRepository(), // 뷰모델 생성
-        ),
+    ProviderScope(
+      overrides: [
+        videoPlaybackConfigRepoProvider.overrideWithValue(repository),
       ],
       child: const TikTokApp(),
     ),
   );
 }
 
-class TikTokApp extends StatelessWidget {
+class TikTokApp extends ConsumerWidget {
   const TikTokApp({super.key});
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // S.load(Locale("en"));
     return MaterialApp.router(
-      routerConfig: router,
+      routerConfig: ref.watch(routerProvider),
       debugShowCheckedModeBanner: false,
       title: 'Tiktok Clone',
       localizationsDelegates: [
