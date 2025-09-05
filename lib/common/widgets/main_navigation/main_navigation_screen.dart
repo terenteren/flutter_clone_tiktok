@@ -83,6 +83,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ),
       ),
       bottomNavigationBar: Container(
+        // color: _selectedIndex == 0 || isDark ? Colors.black : Colors.white,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + Sizes.size12,
+        ),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(

@@ -20,21 +20,21 @@ class UploadVideoViewModel extends AsyncNotifier<void> {
   Future<void> uploadVideo(File video, BuildContext context) async {
     final user = ref.read(authRepo).user;
     final userProfile = ref.read(usersProvider).value;
-    
+
     if (userProfile != null && user != null) {
       state = const AsyncValue.loading();
-      
+
       try {
         // 먼저 비디오 검증 수행
         final validationResult = await _repository.validateVideo(video);
-        
+
         if (!validationResult['isValid']) {
           // 검증 실패 시 에러 표시
           state = AsyncValue.error(
             validationResult['error'],
             StackTrace.current,
           );
-          
+
           // 사용자에게 에러 메시지 표시
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -47,16 +47,17 @@ class UploadVideoViewModel extends AsyncNotifier<void> {
           }
           return;
         }
-        
+
         // 검증 통과 시 업로드 진행
         state = await AsyncValue.guard(() async {
           final task = await _repository.uploadVideoFile(video, user.uid);
           if (task != null) {
             final snapshot = await task;
             final downloadUrl = await snapshot.ref.getDownloadURL();
-            
+
             await _repository.saveVideo(
               VideoModel(
+                id: "", // Firestore에서 자동 생성
                 title: "My Video",
                 description: "This is my video",
                 fileUrl: downloadUrl,
@@ -68,7 +69,7 @@ class UploadVideoViewModel extends AsyncNotifier<void> {
                 createdAt: DateTime.now().millisecondsSinceEpoch,
               ),
             );
-            
+
             // 업로드 성공 메시지
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -86,7 +87,7 @@ class UploadVideoViewModel extends AsyncNotifier<void> {
       } catch (e) {
         // 예상치 못한 에러 처리
         state = AsyncValue.error(e, StackTrace.current);
-        
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

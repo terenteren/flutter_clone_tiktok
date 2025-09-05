@@ -20,7 +20,7 @@ class VideosRepository {
       // 1. 파일 크기 확인
       final fileSizeInBytes = await video.length();
       final fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-      
+
       if (fileSizeInMB > maxVideoSizeMB) {
         return {
           'isValid': false,
@@ -32,13 +32,13 @@ class VideosRepository {
       // 2. 비디오 길이 확인
       final videoController = VideoPlayerController.file(video);
       await videoController.initialize();
-      
+
       final duration = videoController.value.duration;
       final durationInSeconds = duration.inSeconds;
-      
+
       // 컨트롤러 정리
       await videoController.dispose();
-      
+
       if (durationInSeconds > maxVideoDurationSeconds) {
         return {
           'isValid': false,
@@ -53,12 +53,8 @@ class VideosRepository {
         'fileSize': fileSizeInMB,
         'duration': durationInSeconds,
       };
-      
     } catch (e) {
-      return {
-        'isValid': false,
-        'error': '비디오 파일을 확인하는 중 오류가 발생했습니다: $e',
-      };
+      return {'isValid': false, 'error': '비디오 파일을 확인하는 중 오류가 발생했습니다: $e'};
     }
   }
 
@@ -66,11 +62,11 @@ class VideosRepository {
   Future<UploadTask?> uploadVideoFile(File video, String uid) async {
     // 비디오 검증
     final validationResult = await validateVideo(video);
-    
+
     if (!validationResult['isValid']) {
       throw Exception(validationResult['error']);
     }
-    
+
     final fileRef = _storage.ref().child(
       "/videos/$uid/${DateTime.now().millisecondsSinceEpoch.toString()}",
     );
@@ -80,6 +76,46 @@ class VideosRepository {
   // create a video document
   Future<void> saveVideo(VideoModel data) async {
     await _db.collection("videos").add(data.toJson());
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchVideos({
+    int? lastItemCreatedAt,
+  }) {
+    final query = _db
+        .collection("videos")
+        .orderBy("createdAt", descending: true)
+        .limit(2);
+    if (lastItemCreatedAt == null) {
+      return query.get();
+    } else {
+      return query.startAfter([lastItemCreatedAt]).get();
+    }
+  }
+
+  Future<void> togglelikeVideo(String videoId, String userId) async {
+    final query = _db.collection("likes").doc("${videoId}000$userId");
+    final like = await query.get();
+
+    if (!like.exists) {
+      // 좋아요 추가 (Cloud Functions가 카운트 업데이트)
+      await query.set({"createdAt": DateTime.now().millisecondsSinceEpoch});
+    } else {
+      // 좋아요 삭제 (Cloud Functions가 카운트 업데이트)
+      await query.delete();
+    }
+  }
+  
+  Future<bool> isLiked(String videoId, String userId) async {
+    final doc = await _db.collection("likes").doc("${videoId}000$userId").get();
+    return doc.exists;
+  }
+  
+  // 실시간 좋아요 수 스트림
+  Stream<int> getLikesStream(String videoId) {
+    return _db.collection("videos").doc(videoId).snapshots().map((snapshot) {
+      final data = snapshot.data();
+      return data?['likes'] ?? 0;
+    });
   }
 }
 

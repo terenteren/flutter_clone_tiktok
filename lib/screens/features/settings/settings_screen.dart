@@ -14,7 +14,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = isDarkMode(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: const Text('설정')),
       body: ListView(
         children: [
           SwitchListTile.adaptive(
@@ -22,16 +22,16 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (value) => {
               ref.read(playbackConfigProvider.notifier).setMuted(value),
             },
-            title: const Text('Mute Video'),
-            subtitle: const Text('Videos will be muted by default.'),
+            title: const Text('비디오 음소거'),
+            subtitle: const Text('비디오가 기본적으로 음소거 상태로 재생됩니다.'),
           ),
           SwitchListTile.adaptive(
             value: ref.watch(playbackConfigProvider).autoplay,
             onChanged: (value) => {
               ref.read(playbackConfigProvider.notifier).setAutoplay(value),
             },
-            title: const Text('Autoplay'),
-            subtitle: const Text('Video will start playing automatically.'),
+            title: const Text('자동 재생'),
+            subtitle: const Text('비디오가 자동으로 재생됩니다.'),
           ),
           SwitchListTile.adaptive(
             value: false,
