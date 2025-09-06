@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.tiktokClone</string>
+	<string>com.jaewonjang.tiktokClone</string>
 	<key>PROJECT_ID</key>
 	<string>kift-tiktok-clone-v1</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:791355881093:ios:cad4048f0aa47fa8e09bec</string>
+	<string>1:791355881093:ios:94a576c1c7c8fe2be09bec</string>
 </dict>
 </plist>

@@ -177,6 +177,56 @@ export const onLikedCreated = onDocumentCreated(
         likes: admin.firestore.FieldValue.increment(1),
       });
 
+    // 좋아요 알림 푸시
+    const video = await (
+      await db.collection("videos").doc(videoId).get()
+    ).data();
+    
+    if (video) {
+      const creatorUid = video.creatorUid;
+      const userId = likeId.split("000")[1]; // 좋아요 누른 사용자 ID
+      
+      // 자기 자신의 비디오에 좋아요를 누른 경우 알림 전송하지 않음
+      if (creatorUid === userId) {
+        logger.log(`User ${userId} liked their own video ${videoId}`);
+        return;
+      }
+      
+      // 좋아요 누른 사용자 정보 가져오기
+      const likerDoc = await db.collection("users").doc(userId).get();
+      const likerData = likerDoc.data();
+      const likerName = likerData?.name || likerData?.username || "Someone";
+      
+      // 비디오 생성자 정보 가져오기
+      const creatorDoc = await db.collection("users").doc(creatorUid).get();
+      const creatorData = creatorDoc.data();
+      
+      if (creatorData && creatorData.token) {
+        const token = creatorData.token;
+        const videoTitle = video.title || "your video";
+        
+        try {
+          await admin.messaging().send({
+            token: token,
+            data: {
+              screen: `/home?videoId=${videoId}`,
+              type: "like",
+              videoId: videoId,
+            },
+            notification: {
+              title: `${likerName} liked your video`,
+              body: `"${videoTitle}" has a new like! 💖`,
+            },
+          });
+          logger.log(`Like notification sent to ${creatorUid} for video ${videoId}`);
+        } catch (error) {
+          logger.error(`Failed to send like notification: ${error}`);
+        }
+      } else {
+        logger.log(`No FCM token found for user ${creatorUid}`);
+      }
+    }
+
     logger.log(`Like added for video ${videoId}`);
   }
 );

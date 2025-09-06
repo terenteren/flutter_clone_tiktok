@@ -10,6 +10,7 @@ import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/firebase_options.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:tiktok_clone/router.dart';
+import 'package:tiktok_clone/screens/features/notifications/notifications_provider.dart';
 import 'package:tiktok_clone/screens/features/videos/repos/video_playback_config_repo.dart';
 import 'package:tiktok_clone/screens/features/videos/view_models/playback_config_vm.dart';
 
@@ -57,6 +58,7 @@ class TikTokApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // S.load(Locale("en"));
+
     return MaterialApp.router(
       routerConfig: ref.watch(routerProvider),
       debugShowCheckedModeBanner: false,
